@@ -12,36 +12,36 @@
         android:id="@+id/importantMeetings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="#E4E1EA"
-        android:text="My important buisnes meetings"
-        android:textSize="25sp" />
+        android:layout_margin="@dimen/marginNotes"
+        android:background="@color/noteBckgrColor"
+        android:text="@string/my_important_buisnes_meetings"
+        android:textSize="@dimen/noteTextSize" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/shoppingList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="#E4E1EA"
-        android:text="Shopping list in grocery store"
-        android:textSize="25sp" />
+        android:layout_margin="@dimen/marginNotes"
+        android:background="@color/noteBckgrColor"
+        android:text="@string/shopping_list_in_grocery_store"
+        android:textSize="@dimen/noteTextSize" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/seconradyMatters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="#E4E1EA"
-        android:text="Do it if have free time"
-        android:textSize="25sp" />
+        android:layout_margin="@dimen/marginNotes"
+        android:background="@color/noteBckgrColor"
+        android:text="@string/do_it_if_have_free_time"
+        android:textSize="@dimen/noteTextSize" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/interestingThoughts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="#E4E1EA"
-        android:text="For not to forget"
-        android:textSize="25sp" />
+        android:layout_margin="@dimen/marginNotes"
+        android:background="@color/noteBckgrColor"
+        android:text="@string/for_not_to_forget"
+        android:textSize="@dimen/noteTextSize" />
 
 </LinearLayout>

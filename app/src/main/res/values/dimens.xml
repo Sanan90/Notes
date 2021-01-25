@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="editTextTopPadding">80dp</dimen>
+    <dimen name="btnOkMargin">20dp</dimen>
+    <dimen name="okBtnTextSize">20sp</dimen>
+    <dimen name="okBtnWidth">50dp</dimen>
+    <dimen name="noteTextSize">25sp</dimen>
+    <dimen name="marginNotes">5dp</dimen>
+    <dimen name="dp0">0dp</dimen>
+</resources>

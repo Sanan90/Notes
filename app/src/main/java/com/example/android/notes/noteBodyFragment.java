@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -60,16 +61,39 @@ public class noteBodyFragment extends Fragment {
         TextInputEditText shoppingListBody = view.findViewById(R.id.shoppingListBody);
         TextInputEditText seconradyMattersBody = view.findViewById(R.id.seconradyMattersBody);
         TextInputEditText interestingThoughtsBody = view.findViewById(R.id.interestingThoughtsBody);
+        TextInputEditText a = seconradyMattersBody;
+        MaterialButton btnOk = view.findViewById(R.id.btnOk);
 
         super.onViewCreated(view, savedInstanceState);
         if (index2 == 1) {
             importantMeetingsBody.setVisibility(View.VISIBLE);
-        }   else if (index2 ==2) {
+            btnOk.setVisibility(View.VISIBLE);
+            a = importantMeetingsBody;
+        } else if (index2 == 2) {
             shoppingListBody.setVisibility(View.VISIBLE);
-        }   else if (index2 ==3) {
+                        btnOk.setVisibility(View.VISIBLE);
+
+            a = shoppingListBody;
+        } else if (index2 == 3) {
             seconradyMattersBody.setVisibility(View.VISIBLE);
-        }   else if (index2 ==4) {
+                        btnOk.setVisibility(View.VISIBLE);
+
+            a = seconradyMattersBody;
+        } else if (index2 == 4) {
             interestingThoughtsBody.setVisibility(View.VISIBLE);
+                        btnOk.setVisibility(View.VISIBLE);
+
+            a = interestingThoughtsBody;
         }
+        initList(view, a);
     }
+
+    private void initList(View view, TextInputEditText editText) {
+        MaterialButton btnOk = view.findViewById(R.id.btnOk);
+
+        btnOk.setOnClickListener(v -> {
+            editText.setText(editText.getText());
+        });
+    }
+
 }

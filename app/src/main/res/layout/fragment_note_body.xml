@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,21 +10,27 @@
         android:id="@+id/importantMeetingsBody"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="111111111111111111111111111"
+        android:gravity="top"
+        android:paddingTop="@dimen/editTextTopPadding"
+        android:text=""
         android:visibility="gone" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/shoppingListBody"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="222222222222222222222222222"
+        android:gravity="top"
+        android:paddingTop="@dimen/editTextTopPadding"
+        android:text=""
         android:visibility="gone" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/seconradyMattersBody"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="333333333333333333333333333333333"
+        android:gravity="top"
+        android:paddingTop="@dimen/editTextTopPadding"
+        android:text=""
         android:visibility="gone" />
 
 
@@ -31,7 +38,23 @@
         android:id="@+id/interestingThoughtsBody"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="444444444444444444444444444444444444444444444"
+        android:gravity="top"
+        android:paddingTop="@dimen/editTextTopPadding"
+        android:text=""
         android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOk"
+        android:layout_width="@dimen/okBtnWidth"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="@dimen/btnOkMargin"
+        android:layout_marginEnd="@dimen/btnOkMargin"
+        android:text="@string/ok"
+        android:textColor="@color/black"
+        android:textSize="@dimen/okBtnTextSize"
+        android:visibility="gone"
+        app:backgroundTint="@color/okBtnColotBckg" />
+
 
 </FrameLayout>
