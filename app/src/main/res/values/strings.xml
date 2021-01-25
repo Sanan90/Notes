@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Notes</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ok">✓</string>
+    <string name="my_important_buisnes_meetings">My important buisnes meetings</string>
+    <string name="shopping_list_in_grocery_store">Shopping list in grocery store</string>
+    <string name="do_it_if_have_free_time">Do it if have free time</string>
+    <string name="for_not_to_forget">For not to forget</string>
 </resources>
