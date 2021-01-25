@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".noteBodyFragment">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/importantMeetingsBody"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="111111111111111111111111111"
+        android:visibility="gone" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/shoppingListBody"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="222222222222222222222222222"
+        android:visibility="gone" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/seconradyMattersBody"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="333333333333333333333333333333333"
+        android:visibility="gone" />
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/interestingThoughtsBody"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="444444444444444444444444444444444444444444444"
+        android:visibility="gone" />
+
+</FrameLayout>
