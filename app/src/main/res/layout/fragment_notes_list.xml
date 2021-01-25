@@ -15,7 +15,12 @@
         android:layout_margin="@dimen/marginNotes"
         android:background="@color/noteBckgrColor"
         android:text="@string/my_important_buisnes_meetings"
-        android:textSize="@dimen/noteTextSize" />
+        android:textSize="@dimen/noteTextSize"
+        />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/shoppingList"
