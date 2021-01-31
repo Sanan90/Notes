@@ -7,4 +7,12 @@
     <string name="shopping_list_in_grocery_store">Shopping list in grocery store</string>
     <string name="do_it_if_have_free_time">Do it if have free time</string>
     <string name="for_not_to_forget">For not to forget</string>
+    <string name="back">back</string>
+    <string name="main">main</string>
+    <string name="favorite">favor</string>
+    <string name="settings">set</string>
+    <string name="search">search</string>
+    <string name="new_menu_item_added">new_menu_item_added</string>
+    <string name="navigation_drawer_open">open_drawer</string>
+    <string name="navigation_drawer_close">close_drawer</string>
 </resources>

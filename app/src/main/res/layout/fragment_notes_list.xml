@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".notesList">
+    tools:context=".NotesListFragment"
+    android:id="@+id/notesListsContainer">
 
-    <!-- TODO: Update blank fragment layout -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/importantMeetings"
         android:layout_width="match_parent"
@@ -15,9 +15,7 @@
         android:layout_margin="@dimen/marginNotes"
         android:background="@color/noteBckgrColor"
         android:text="@string/my_important_buisnes_meetings"
-        android:textSize="@dimen/noteTextSize"
-        />
-
+        android:textSize="@dimen/noteTextSize" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/shoppingList"
@@ -45,5 +43,4 @@
         android:background="@color/noteBckgrColor"
         android:text="@string/for_not_to_forget"
         android:textSize="@dimen/noteTextSize" />
-
 </LinearLayout>

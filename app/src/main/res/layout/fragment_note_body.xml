@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".noteBodyFragment">
+    tools:context=".NoteBodyFragment">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/importantMeetingsBody"
@@ -30,7 +30,6 @@
         android:text="3"
         android:visibility="gone" />
 
-
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/interestingThoughtsBody"
         android:layout_width="match_parent"
@@ -38,7 +37,4 @@
         android:gravity="top"
         android:text="4"
         android:visibility="gone" />
-
-
-
 </FrameLayout>

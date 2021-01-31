@@ -9,31 +9,25 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link noteBodyFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class noteBodyFragment extends Fragment {
+public class NoteBodyFragment extends Fragment {
 
     static final String ARG_INDEX = "index";
     static final String ARG_INDEX2 = "index2";
-    static  final String LAST_TEXT = "last_text";
-    static  String text;
+    static final String LAST_TEXT = "last_text";
+    static String text;
     private int index;
     private int index2;
 
-    public noteBodyFragment() {
-        // Required empty public constructor
+    public NoteBodyFragment() {
     }
 
-    public static noteBodyFragment newInstance(int index) {
-        noteBodyFragment fragment = new noteBodyFragment();
+    public static NoteBodyFragment newInstance(int index) {
+        NoteBodyFragment fragment = new NoteBodyFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_INDEX2, index);
         fragment.setArguments(args);
@@ -43,16 +37,11 @@ public class noteBodyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            index = getArguments().getInt(ARG_INDEX);
-            index2 = getArguments().getInt(ARG_INDEX2);
-        }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_note_body, container, false);
     }
 
@@ -64,6 +53,12 @@ public class noteBodyFragment extends Fragment {
         TextInputEditText seconradyMattersBody = view.findViewById(R.id.seconradyMattersBody);
         TextInputEditText interestingThoughtsBody = view.findViewById(R.id.interestingThoughtsBody);
         TextInputEditText a = seconradyMattersBody;
+
+
+        if (getArguments() != null) {
+            index = getArguments().getInt(ARG_INDEX);
+            index2 = getArguments().getInt(ARG_INDEX2);
+        }
 
         super.onViewCreated(view, savedInstanceState);
         if (index2 == 1) {
