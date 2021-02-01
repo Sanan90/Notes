@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,16 +62,31 @@ public class NotesListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+//        initlist(view);
         initlist(view);
         initPopupMenu(view);
     }
 
+    private void initlist(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.recycl_for_notes_list);
+        String[] notes = view.getResources().getStringArray(R.array.notes_title);
+        MyAdapter myAdapter = new MyAdapter(notes);
+        recyclerView.setAdapter(myAdapter);
+
+        myAdapter.MyItemClickListener(new MyAdapter.MyClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                showNoteBodySettings(position + 1);
+            }
+        });
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+
     private void initPopupMenu(View view) {
         LinearLayout layout = view.findViewById(R.id.notesListsContainer);
-        MaterialTextView text1 = view.findViewById(R.id.importantMeetings);
-        MaterialTextView text2 = view.findViewById(R.id.seconradyMatters);
-        MaterialTextView text3 = view.findViewById(R.id.shoppingList);
-        MaterialTextView text4 = view.findViewById(R.id.interestingThoughts);
 
         layout.setOnClickListener(v -> {
             Activity activity = requireActivity();
@@ -173,31 +190,6 @@ public class NotesListFragment extends Fragment {
 //        });
     }
 
-
-    private void initlist(View view) {
-
-        MaterialTextView textViewImpMeet = view.findViewById(R.id.importantMeetings);
-        MaterialTextView textViewShopList = view.findViewById(R.id.shoppingList);
-        MaterialTextView textViewSecMatter = view.findViewById(R.id.seconradyMatters);
-        MaterialTextView textViewIntTh = view.findViewById(R.id.interestingThoughts);
-
-        textViewImpMeet.setOnClickListener(v ->
-                showNoteBodySettings(1)
-        );
-
-        textViewShopList.setOnClickListener(v ->
-                showNoteBodySettings(2)
-        );
-
-        textViewSecMatter.setOnClickListener(v ->
-                showNoteBodySettings(3)
-        );
-
-        textViewIntTh.setOnClickListener(v ->
-                showNoteBodySettings(4)
-        );
-    }
-
     private void showNoteBodySettings(int num) {
         if (isLandscape) {
             showNoteBodyForLandscape(num);
@@ -213,7 +205,7 @@ public class NotesListFragment extends Fragment {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.notesBody, fragment);
-            fragmentTransaction.setTransition(fragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         }
     }
