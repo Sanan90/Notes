@@ -28,7 +28,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class NotesListFragment extends Fragment {
 
-    private boolean isLandscape;   // Чтобы знать режим крана
+    private boolean isLandscape;   // Чтобы знать режим экрана
 
     public NotesListFragment() {
     }
@@ -67,24 +67,27 @@ public class NotesListFragment extends Fragment {
         initPopupMenu(view);
     }
 
+    //  Начинаме работу со списком
     private void initlist(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recycl_for_notes_list);
         String[] notes = view.getResources().getStringArray(R.array.notes_title);
         MyAdapter myAdapter = new MyAdapter(notes);
         recyclerView.setAdapter(myAdapter);
 
+        //  Вешаем слушатели для элементов списка
         myAdapter.MyItemClickListener(new MyAdapter.MyClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                showNoteBodySettings(position + 1);
+                showNoteBodySettings(position + 1); // Выясняем какая по счету заметка нажата, и передаем эту цифру в метод showNoteBodySettings
             }
         });
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
     }
 
-
+    //  Настраиваем контекстное меню
     private void initPopupMenu(View view) {
         LinearLayout layout = view.findViewById(R.id.notesListsContainer);
 
@@ -190,14 +193,16 @@ public class NotesListFragment extends Fragment {
 //        });
     }
 
+    //  проверяем режим эурана, портретный или ландшавный
     private void showNoteBodySettings(int num) {
         if (isLandscape) {
-            showNoteBodyForLandscape(num);
+            showNoteBodyForLandscape(num);  //  если ландшафный
         } else {
-            showNoteBody(num);
+            showNoteBody(num);  // Если портретный
         }
     }
 
+    //  Метод вызываеться принажатии на заметку при ландшавном режиме
     private void showNoteBodyForLandscape(int num) {
         Context context = getContext();
         if (context != null) {
@@ -206,10 +211,15 @@ public class NotesListFragment extends Fragment {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.notesBody, fragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            //  Берем текущий интент и меняем там передаваемый аргумент, чтобы при повороте экрана передавался именно новое значение Intent2
+            Intent intent = getActivity().getIntent();
+            intent.putExtra(NoteBodyFragment.ARG_INDEX2, num);
+
             fragmentTransaction.commit();
         }
     }
 
+    //  Метод вызываеться принажатии на заметку при портретном режиме
     private void showNoteBody(int num) {
         Context context = getContext();
         if (context != null) {

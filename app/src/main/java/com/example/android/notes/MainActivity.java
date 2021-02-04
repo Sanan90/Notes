@@ -3,6 +3,7 @@ package com.example.android.notes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void startApp() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.mainDisplay, new NotesListFragment()).commit();
+        fragmentTransaction.replace(R.id.mainDisplay, new NotesListFragment()).commit();
     }
     //  Если это не первый запуск и открыта заметка.
     private void showNote() {
@@ -83,32 +84,37 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         //  Проверяем положение экрана.
         if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) { // Если портретный режим, открываем заметку в главном макете.
-            transaction.add(R.id.mainDisplay, noteBodyFragment).commit();
+            transaction.replace(R.id.mainDisplay, noteBodyFragment).commit();
+        }   else {
+            FragmentManager fragmentManager2 = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
+            fragmentTransaction2.replace(R.id.mainDisplay, new NotesListFragment()).commit();
+            transaction.replace(R.id.notesBody, noteBodyFragment).commit();
         }
     }
 
+    //  Устанавливаем слушатели для кнопок Тулбара
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
             case R.id.action_settings:
-                Toast.makeText(this, "HEEEEEYYY", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_main:
-                Toast.makeText(this, "HEEEEEYYY", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_favorite:
-                Toast.makeText(this, "HEEEEEYYY", Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    //  Находим поиск и вешаем слушатель.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem search = menu.findItem(R.id.action_search);
+
         SearchView searchText = (SearchView) search.getActionView();
         searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -116,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
