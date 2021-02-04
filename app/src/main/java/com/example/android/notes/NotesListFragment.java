@@ -28,7 +28,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class NotesListFragment extends Fragment {
 
-    private boolean isLandscape;
+    private boolean isLandscape;   // Чтобы знать режим крана
 
     public NotesListFragment() {
     }

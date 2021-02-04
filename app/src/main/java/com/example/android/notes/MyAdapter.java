@@ -11,17 +11,20 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-    String[] notesList;
-    public MyClickListener myClickListener;
+    String[] notesList; //  Создаем массив строк
+    public MyClickListener myClickListener; //  Создаем экземпляр нашего слушателя
 
+    //  Передаем созданному экземпляру, полученного аргумент
     public void MyItemClickListener(MyClickListener myClickListener) {
         this.myClickListener = myClickListener;
     }
 
+    //  Инициализируем наш массив строк
     public MyAdapter(String[] notesList) {
         this.notesList = notesList;
     }
 
+    //  Вызываеться столько раз, сколько элементов списка видно на экране
     @NonNull
     @Override
     public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -29,17 +32,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return new MyViewHolder(v);
     }
 
+    //  Вызыввается каждый раз когда на экране появляется (Становиться видимым) какой то элемент списка.
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
         holder.bind(notesList[position]);
     }
 
+    //  Выясняем сколько строк в нашем списке
     @Override
     public int getItemCount() {
         return notesList.length;
     }
 
-
+    //  Интерфейс для нажатий.
     public interface MyClickListener {
         void onItemClick(View view, int position);
     }
@@ -52,6 +57,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             super(itemView);
             textView = itemView.findViewById(R.id.text_note_title);
 
+            //  Вешаем слушатель на элементы списка
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

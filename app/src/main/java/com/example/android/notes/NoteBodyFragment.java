@@ -26,6 +26,7 @@ public class NoteBodyFragment extends Fragment {
     public NoteBodyFragment() {
     }
 
+    //  Создаем фрагмент и передаем в каестве аргумента индекс, какая по счету заметка нажата.
     public static NoteBodyFragment newInstance(int index) {
         NoteBodyFragment fragment = new NoteBodyFragment();
         Bundle args = new Bundle();
@@ -47,34 +48,32 @@ public class NoteBodyFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        //  Находим все тела заметок
         TextInputEditText importantMeetingsBody = view.findViewById(R.id.importantMeetingsBody);
         TextInputEditText shoppingListBody = view.findViewById(R.id.shoppingListBody);
         TextInputEditText seconradyMattersBody = view.findViewById(R.id.seconradyMattersBody);
         TextInputEditText interestingThoughtsBody = view.findViewById(R.id.interestingThoughtsBody);
         TextInputEditText a = seconradyMattersBody;
 
-
+        //  Если есть аргумент, значит получаем и передаем в index2, какая по счету заметка выбрана.
         if (getArguments() != null) {
-            index = getArguments().getInt(ARG_INDEX);
             index2 = getArguments().getInt(ARG_INDEX2);
         }
 
-        super.onViewCreated(view, savedInstanceState);
+        //  Выясняем какая заметка выбрана и делаем тело данной заметки видимой
         if (index2 == 1) {
             importantMeetingsBody.setVisibility(View.VISIBLE);
             a = importantMeetingsBody;
         } else if (index2 == 2) {
             shoppingListBody.setVisibility(View.VISIBLE);
-
             a = shoppingListBody;
         } else if (index2 == 3) {
             seconradyMattersBody.setVisibility(View.VISIBLE);
-
             a = seconradyMattersBody;
         } else if (index2 == 4) {
             interestingThoughtsBody.setVisibility(View.VISIBLE);
-
             a = interestingThoughtsBody;
         }
     }

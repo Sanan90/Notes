@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,46 +28,24 @@ public class MainActivity extends AppCompatActivity {
         initView();
     }
 
-    private void initView() {
-        if (getIntent().getExtras() == null) {
-            startApp();
-        } else {
-            showNote();
-        }
-//        initButtonFavorite();
-//        initButtonSettings();
-//        initButtonBack();
-    }
-
-    private void showNote() {
-        NoteBodyFragment noteBodyFragment = new NoteBodyFragment();
-        noteBodyFragment.setArguments(getIntent().getExtras());
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.mainDisplay, noteBodyFragment).commit();
-    }
-
-    private void startApp() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.mainDisplay, new NotesListFragment()).commit();
-    }
-
+    //  Метод для нахождения и постройки, всех меню.
     private void initMenus() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initDrawer(toolbar);
     }
 
+    //  Принимаем наш Тулбар, чтобы установить, а также настраиваем боковое меню.
     private void initDrawer(Toolbar toolbar) {
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-          this, drawer, toolbar,
+                this, drawer, toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        //  Устанавливаем слушатель для кнопок бокового меню.
         NavigationView navigationView = findViewById(R.id.nav_viwe);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -78,6 +57,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //  Проверяем какой фрагмент показывать.
+    private void initView() {
+        if (getIntent().getExtras() == null) {  // Если это первый запуск.
+            startApp();
+        } else {    // Если не первый запуск
+            showNote();
+        }
+//        initButtonFavorite();
+//        initButtonSettings();
+//        initButtonBack();
+    }
+
+    //  Создаем менеджера фрагментов, открываем транзакцию, затем передаем в транзакцию часть экрана, предназначенную для показа списка заметок и фрагмент со списком заметок.
+    private void startApp() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.mainDisplay, new NotesListFragment()).commit();
+    }
+    //  Если это не первый запуск и открыта заметка.
+    private void showNote() {
+        NoteBodyFragment noteBodyFragment = new NoteBodyFragment();
+        noteBodyFragment.setArguments(getIntent().getExtras());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        //  Проверяем положение экрана.
+        if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) { // Если портретный режим, открываем заметку в главном макете.
+            transaction.add(R.id.mainDisplay, noteBodyFragment).commit();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -85,10 +93,13 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_settings:
+                Toast.makeText(this, "HEEEEEYYY", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_main:
+                Toast.makeText(this, "HEEEEEYYY", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_favorite:
+                Toast.makeText(this, "HEEEEEYYY", Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
