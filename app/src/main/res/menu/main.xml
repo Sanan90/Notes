@@ -12,7 +12,7 @@
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="20"
         android:title="@string/Delete"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"

@@ -19,6 +19,9 @@
     <string name="Add">Добавить</string>
     <string name="update">Изменить</string>
     <string name="delete">Удалить</string>
+    <string name="okButton">OK</string>
+    <string name="delete_note">Delete note</string>
+    <string name="open_note">Open note</string>
 
 </resources>
 
