@@ -14,8 +14,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +25,13 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textview.MaterialTextView;
-
-public class NotesListFragment extends Fragment {
+public class NotesListFragment extends Fragment implements OnRegisterMenu {
 
     private boolean isLandscape;   // Чтобы знать режим экрана
+
+    private CardsSource data;
+    private MyAdapter myAdapter;
+    private RecyclerView recyclerView;
 
     public NotesListFragment() {
     }
@@ -56,35 +59,99 @@ public class NotesListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_notes_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_notes_list, container, false);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        initlist(view);
-        initlist(view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycl_for_notes_list);
+        //  Получим имточник данных для списка
+//        initRecyclerView(recyclerView, data);
+        initView(view);
+        setHasOptionsMenu(true);
         initPopupMenu(view);
     }
 
-    //  Начинаме работу со списком
-    private void initlist(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.recycl_for_notes_list);
-        String[] notes = view.getResources().getStringArray(R.array.notes_title);
-        MyAdapter myAdapter = new MyAdapter(notes);
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                data.addCardData(new CardData("Новая заметка" + data.size(), "Содержимое заметки" + data.size(), false));
+                myAdapter.notifyItemInserted(data.size() - 1);
+                recyclerView.scrollToPosition(data.size() - 1);
+                return true;
+            case R.id.action_clear:
+                data.clearCardData();
+                myAdapter.notifyDataSetChanged();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void initView(View view) {
+        recyclerView = view.findViewById(R.id.recycl_for_notes_list);
+        data = new CardsSourceImpl(getResources()).init();
+        initRecyclerView();
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.card_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position = myAdapter.getMenuPosition();
+
+        switch (item.getItemId()) {
+            case R.id.action_update:
+                data.updateCardData(position, new CardData("Измененная заметка" + position,
+                        "Новое содержимое", false));
+                myAdapter.notifyItemChanged(position);
+                return true;
+            case R.id.action_delete:
+                data.deleteCardData(position);
+                myAdapter.notifyItemRemoved(position);
+                return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void initRecyclerView() {
+
+        //  Эта установка служит для увеличения производительности системы
+        recyclerView.setHasFixedSize(true);
+
+        // Будем работать со встроченным менеджером
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        //  Установим адаптер
+        myAdapter = new MyAdapter(data, this);
         recyclerView.setAdapter(myAdapter);
 
-        //  Вешаем слушатели для элементов списка
+//        // Добавим разделитель карточек
+//        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
+//        itemDecoration.setDrawable(getResources().getDrawable(R.drawable., null));
+//        recyclerView.addItemDecoration(itemDecoration);
+
+        //  Устновим слушателя
         myAdapter.MyItemClickListener(new MyAdapter.MyClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                showNoteBodySettings(position + 1); // Выясняем какая по счету заметка нажата, и передаем эту цифру в метод showNoteBodySettings
+                showNoteBodySettings(data.getCardData(position)); // Выясняем какая по счету заметка нажата, и передаем эту цифру в метод showNoteBodySettings
             }
         });
-
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
     }
 
     //  Настраиваем контекстное меню
@@ -115,118 +182,46 @@ public class NotesListFragment extends Fragment {
             });
             popupMenu.show();
         });
-//        text1.setOnClickListener(v -> {
-//            Activity activity = requireActivity();
-//            PopupMenu popupMenu = new PopupMenu(activity, v);
-//            activity.getMenuInflater().inflate(R.menu.popup2, popupMenu.getMenu());
-//            Menu menu = popupMenu.getMenu();
-//            popupMenu.setOnMenuItemClickListener(item -> {
-//                int id = item.getItemId();
-//                switch (id) {
-//                    case R.id.item1_popup:
-//                        Toast.makeText(getContext(), "choose1", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.item2_popup:
-//                        Toast.makeText(getContext(), "choose2", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                }
-//                return false;
-//            });
-//            popupMenu.show();
-//        });
-//
-//        text2.setOnClickListener(v -> {
-//            Activity activity = requireActivity();
-//            PopupMenu popupMenu = new PopupMenu(activity, v);
-//            activity.getMenuInflater().inflate(R.menu.popup2, popupMenu.getMenu());
-//            popupMenu.setOnMenuItemClickListener(item -> {
-//                int id = item.getItemId();
-//                switch (id) {
-//                    case R.id.item1_popup:
-//                        Toast.makeText(getContext(), "choose1", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.item2_popup:
-//                        Toast.makeText(getContext(), "choose2", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                }
-//                return false;
-//            });
-//            popupMenu.show();
-//        });
-//
-//        text3.setOnClickListener(v -> {
-//            Activity activity = requireActivity();
-//            PopupMenu popupMenu = new PopupMenu(activity, v);
-//            activity.getMenuInflater().inflate(R.menu.popup2, popupMenu.getMenu());
-//            popupMenu.setOnMenuItemClickListener(item -> {
-//                int id = item.getItemId();
-//                switch (id) {
-//                    case R.id.item1_popup:
-//                        Toast.makeText(getContext(), "choose1", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.item2_popup:
-//                        Toast.makeText(getContext(), "choose2", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                }
-//                return false;
-//            });
-//            popupMenu.show();
-//        });
-//
-//        text4.setOnClickListener(v -> {
-//            Activity activity = requireActivity();
-//            PopupMenu popupMenu = new PopupMenu(activity, v);
-//            activity.getMenuInflater().inflate(R.menu.popup2, popupMenu.getMenu());
-//            popupMenu.setOnMenuItemClickListener(item -> {
-//                int id = item.getItemId();
-//                switch (id) {
-//                    case R.id.item1_popup:
-//                        Toast.makeText(getContext(), "choose1", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                    case R.id.item2_popup:
-//                        Toast.makeText(getContext(), "choose2", Toast.LENGTH_SHORT).show();
-//                        return true;
-//                }
-//                return false;
-//            });
-//            popupMenu.show();
-//        });
     }
 
     //  проверяем режим эурана, портретный или ландшавный
-    private void showNoteBodySettings(int num) {
+    private void showNoteBodySettings(CardData cardData) {
         if (isLandscape) {
-            showNoteBodyForLandscape(num);  //  если ландшафный
+            showNoteBodyForLandscape(cardData);  //  если ландшафный
         } else {
-            showNoteBody(num);  // Если портретный
+            showNoteBody(cardData);  // Если портретный
         }
     }
 
     //  Метод вызываеться принажатии на заметку при ландшавном режиме
-    private void showNoteBodyForLandscape(int num) {
+    private void showNoteBodyForLandscape(CardData cardData) {
         Context context = getContext();
         if (context != null) {
-            NoteBodyFragment fragment = NoteBodyFragment.newInstance(num);
+            NoteBodyFragment fragment = NoteBodyFragment.newInstance(cardData);
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.notesBody, fragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             //  Берем текущий интент и меняем там передаваемый аргумент, чтобы при повороте экрана передавался именно новое значение Intent2
             Intent intent = getActivity().getIntent();
-            intent.putExtra(NoteBodyFragment.ARG_INDEX2, num);
+            intent.putExtra(NoteBodyFragment.ARG_INDEX2, cardData);
 
             fragmentTransaction.commit();
         }
     }
 
     //  Метод вызываеться принажатии на заметку при портретном режиме
-    private void showNoteBody(int num) {
+    private void showNoteBody(CardData cardData) {
         Context context = getContext();
         if (context != null) {
             Intent intent = new Intent(context, MainActivity.class);
-            intent.putExtra(NoteBodyFragment.ARG_INDEX2, num);
+            intent.putExtra(NoteBodyFragment.ARG_INDEX2, cardData);
             startActivity(intent);
         }
     }
 
+    @Override
+    public void onRegister(View view) {
+        registerForContextMenu(view);
+    }
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -82,13 +83,17 @@ public class MainActivity extends AppCompatActivity {
         noteBodyFragment.setArguments(getIntent().getExtras());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.mainDisplay);
+        if (fragment instanceof NotesListFragment) {
+            fragmentManager.popBackStack();
+        }
         //  Проверяем положение экрана.
         if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) { // Если портретный режим, открываем заметку в главном макете.
-            transaction.replace(R.id.mainDisplay, noteBodyFragment).commit();
+            transaction.add(R.id.mainDisplay, noteBodyFragment).commit();
         }   else {
             FragmentManager fragmentManager2 = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction();
-            fragmentTransaction2.replace(R.id.mainDisplay, new NotesListFragment()).commit();
+            fragmentTransaction2.replace(R.id.mainDisplay, new NotesListFragment()).commit();   //      МОЖНО ТАКЖЕ ПЕРЕДАТЬ 3 АГРУМЕНТ ТАГ, И ВМЕСТО FINDFRAGMENTBYID ИСПОЛЛЬЗОВАТЬ FINDFRAGMENTBYTAG
             transaction.replace(R.id.notesBody, noteBodyFragment).commit();
         }
     }

@@ -1,28 +1,51 @@
 package com.example.android.notes;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+
+import javax.sql.DataSource;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-    String[] notesList; //  Создаем массив строк
+//    String[] notesList; //  Создаем массив строк
     public MyClickListener myClickListener; //  Создаем экземпляр нашего слушателя
+    private CardsSource dataSource;
+    private final OnRegisterMenu fragment;
+
+    public int getMenuPosition() {
+        return menuPosition;
+    }
+
+    private int menuPosition;
+
+    //  передаем в конструктор источник данных
+    //  Сейчас это массив, но может быть зарос в база данных
+    public MyAdapter(CardsSource dataSource, OnRegisterMenu fragment) {
+        this.dataSource = dataSource;
+        this.fragment = fragment;
+    }
 
     //  Передаем созданному экземпляру, полученного аргумент
+
     public void MyItemClickListener(MyClickListener myClickListener) {
         this.myClickListener = myClickListener;
     }
 
-    //  Инициализируем наш массив строк
-    public MyAdapter(String[] notesList) {
-        this.notesList = notesList;
-    }
+//    //  Инициализируем наш массив строк
+//    public MyAdapter(String[] notesList) {
+//        this.notesList = notesList;
+//    }
 
     //  Вызываеться столько раз, сколько элементов списка видно на экране
     @NonNull
@@ -35,13 +58,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     //  Вызыввается каждый раз когда на экране появляется (Становиться видимым) какой то элемент списка.
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
-        holder.bind(notesList[position]);
+        holder.setData(dataSource.getCardData(position));
     }
 
     //  Выясняем сколько строк в нашем списке
     @Override
     public int getItemCount() {
-        return notesList.length;
+        return dataSource.size();
     }
 
     //  Интерфейс для нажатий.
@@ -52,10 +75,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private MaterialTextView textView;
+        private TextInputEditText editText;
+        private CheckBox checkBox;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.text_note_title);
+            editText = itemView.findViewById(R.id.note_body_text);
+            checkBox = itemView.findViewById(R.id.checkbox_note_title);
+
+            registerContextMenu(itemView);
 
             //  Вешаем слушатель на элементы списка
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -65,10 +94,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     myClickListener.onItemClick(itemView, position);
                 }
             });
-
         }
-        public void bind(String s) {
-            textView.setText(s);
+
+        private void registerContextMenu(@NonNull View itemView) {
+            if (fragment!=null) {
+                itemView.setOnLongClickListener(v -> {
+                    menuPosition = getLayoutPosition();
+                    return false;
+                });
+                fragment.onRegister(itemView);
+            }
+        }
+
+        public void setData(CardData cardData) {
+            textView.setText(cardData.getNotes_title());
+            editText.setText(cardData.getNotes_body());
+            checkBox.setChecked(cardData.isCheckbox());
         }
     }
 }
