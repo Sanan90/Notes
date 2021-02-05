@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/item1_popup"
-        android:title="Delete note"
+        android:title="@string/delete_note"
         android:orderInCategory="10"/>
 
     <item
         android:id="@+id/item2_popup"
-        android:title="Open note"
+        android:title="@string/open_note"
         android:orderInCategory="20"/>
 </menu>

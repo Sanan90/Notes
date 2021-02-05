@@ -15,12 +15,13 @@
     <string name="new_menu_item_added">new_menu_item_added</string>
     <string name="navigation_drawer_open">open_drawer</string>
     <string name="navigation_drawer_close">close_drawer</string>
+    <string name="Delete">Очистить</string>
+    <string name="Add">Добавить</string>
+    <string name="update">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="okButton">OK</string>
+    <string name="delete_note">Delete note</string>
+    <string name="open_note">Open note</string>
 
-    <string-array name="notes_title">
-        <item>My important buisnes meetings</item>
-        <item>Shopping list in grocery store</item>
-        <item>Do it if have free time</item>
-        <item>For not to forget</item>
-    </string-array>
 </resources>
 

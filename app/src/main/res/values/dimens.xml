@@ -7,4 +7,6 @@
     <dimen name="noteTextSize">25sp</dimen>
     <dimen name="marginNotes">5dp</dimen>
     <dimen name="dp0">0dp</dimen>
+    <dimen name="textSizeBtnOk">20sp</dimen>
+    <dimen name="marginBtnOk">30dp</dimen>
 </resources>

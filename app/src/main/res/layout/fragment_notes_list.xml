@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".NotesListFragment"
-    android:id="@+id/notesListsContainer">
+    android:id="@+id/notesListsContainer"
+    android:background="#D8D4BC">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycl_for_notes_list"
@@ -15,39 +16,3 @@
         tools:listitem="@layout/list_for_note"/>
 
 </LinearLayout>
-
-    <!--    <com.google.android.material.textview.MaterialTextView-->
-    <!--        android:id="@+id/importantMeetings"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="@dimen/marginNotes"-->
-    <!--        android:background="@color/noteBckgrColor"-->
-    <!--        android:text="@string/my_important_buisnes_meetings"-->
-    <!--        android:textSize="@dimen/noteTextSize" />-->
-
-    <!--    <com.google.android.material.textview.MaterialTextView-->
-    <!--        android:id="@+id/shoppingList"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="@dimen/marginNotes"-->
-    <!--        android:background="@color/noteBckgrColor"-->
-    <!--        android:text="@string/shopping_list_in_grocery_store"-->
-    <!--        android:textSize="@dimen/noteTextSize" />-->
-
-    <!--    <com.google.android.material.textview.MaterialTextView-->
-    <!--        android:id="@+id/seconradyMatters"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="@dimen/marginNotes"-->
-    <!--        android:background="@color/noteBckgrColor"-->
-    <!--        android:text="@string/do_it_if_have_free_time"-->
-    <!--        android:textSize="@dimen/noteTextSize" />-->
-
-    <!--    <com.google.android.material.textview.MaterialTextView-->
-    <!--        android:id="@+id/interestingThoughts"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="@dimen/marginNotes"-->
-    <!--        android:background="@color/noteBckgrColor"-->
-    <!--        android:text="@string/for_not_to_forget"-->
-    <!--        android:textSize="@dimen/noteTextSize" />-->
