@@ -22,6 +22,8 @@
     <string name="okButton">OK</string>
     <string name="delete_note">Delete note</string>
     <string name="open_note">Open note</string>
+    <string name="fragmentCardEditTextHint">Заголовок</string>
+    <string name="save">Save</string>
 
 </resources>
 

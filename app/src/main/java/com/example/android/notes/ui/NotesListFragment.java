@@ -1,4 +1,4 @@
-package com.example.android.notes;
+package com.example.android.notes.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,18 +26,37 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.example.android.notes.MainActivity;
+import com.example.android.notes.R;
+import com.example.android.notes.data.CardData;
+import com.example.android.notes.data.CardSourceFirebaseImpl;
+import com.example.android.notes.data.CardsSource;
+import com.example.android.notes.data.CardsSourceImpl;
+import com.example.android.notes.data.CardsSourceResponse;
+import com.example.android.notes.observe.Observer;
+import com.example.android.notes.observe.Publisher;
+
 public class NotesListFragment extends Fragment implements OnRegisterMenu {
 
     private boolean isLandscape;   // Чтобы знать режим экрана
-
+    private CardData cardData;
     private CardsSource data;
     private MyAdapter myAdapter;
     private RecyclerView recyclerView;
+    public final String DATA = "com/example/android/notes/data";
+
+    private Navigation navigation;
+    private Publisher publisher;
+    // признак, что при повторном открытии фрагмента
+    // (возврате из фрагмента, добавляющего запись)
+    // надо прыгнуть на последнюю запись
+    private boolean moveToFirstPosition;
 
     public NotesListFragment() {
     }
 
-    public static NotesListFragment newInstance(String param1, String param2) {
+    //  Возвращаем NotesListFragment. Здесь можно добавить какие то параметры и аргументы.
+    public static NotesListFragment newInstance() {
         NotesListFragment fragment = new NotesListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -51,11 +71,6 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
                 == Configuration.ORIENTATION_LANDSCAPE;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,11 +81,16 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = view.findViewById(R.id.recycl_for_notes_list);
-        //  Получим имточник данных для списка
-//        initRecyclerView(recyclerView, data);
-        initView(view);
         setHasOptionsMenu(true);
+        //  Получим имточник данных для списка
+        initView(view);
+        data = new CardSourceFirebaseImpl().init(new CardsSourceResponse() {
+            @Override
+            public void initialized(CardsSource cardsData) {
+                myAdapter.notifyDataSetChanged();
+            }
+        });
+        myAdapter.setDataSource(data);
         initPopupMenu(view);
     }
 
@@ -82,26 +102,81 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
+        return onItemSelected(item.getItemId()) || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        return onItemSelected(item.getItemId()) || super.onContextItemSelected(item);
+    }
+
+    private boolean onItemSelected(int menuItemId) {
+        switch (menuItemId) {
             case R.id.action_add:
-                data.addCardData(new CardData("Новая заметка" + data.size(), "Содержимое заметки" + data.size(), false));
-                myAdapter.notifyItemInserted(data.size() - 1);
-                recyclerView.scrollToPosition(data.size() - 1);
+                navigation.addFragment(CardFragment.newInstance(), true);
+                publisher.subscribe(new Observer() {
+                    @Override
+                    public void updateCardData(CardData cardData) {
+                        data.addCardData(cardData);
+                        myAdapter.notifyItemInserted(data.size());
+                        // это сигнал, чтобы вызванный метод onCreateView
+                        // перепрыгнул на начало списка
+                        moveToFirstPosition = true;
+                    }
+                });
                 return true;
-            case R.id.action_clear:
+
+            case R.id.action_update:
+                final int updatePosition = myAdapter.getMenuPosition();
+                navigation.addFragment(CardFragment.newInstance(data.getCardData(updatePosition)),
+                        true);
+                publisher.subscribe(new Observer() {
+                    @Override
+                    public void updateCardData(CardData cardData) {
+                        data.updateCardData(updatePosition, cardData);
+                        myAdapter.notifyItemChanged(updatePosition);
+                    }
+                });
+                return true;
+
+            case R.id.action_delete:
+                int deletePosition = myAdapter.getMenuPosition();
+                data.deleteCardData(deletePosition);
+                myAdapter.notifyItemRemoved(deletePosition);
+                return true;
+
+            case  R.id.action_clear:
                 data.clearCardData();
                 myAdapter.notifyDataSetChanged();
                 return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
+    //  Создаем наш список.
     private void initView(View view) {
         recyclerView = view.findViewById(R.id.recycl_for_notes_list);
-        data = new CardsSourceImpl(getResources()).init();
         initRecyclerView();
     }
 
+
+    // Данный метод вызываеться, когда фрагмент связывается с активностью. Мы передаем данноve фрагмента, navigation и publisher нашего  Activity
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        MainActivity activity = (MainActivity)context;
+        navigation = activity.getNavigation();
+        publisher = activity.getPublisher();
+    }
+
+    @Override
+    public void onDetach() {
+        navigation = null;
+        publisher = null;
+        super.onDetach();
+    }
+
+    //  Метод который вызываеться во время длинного нажатия на элемент списка
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -109,26 +184,7 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
         inflater.inflate(R.menu.card_menu, menu);
     }
 
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int position = myAdapter.getMenuPosition();
-
-        switch (item.getItemId()) {
-            case R.id.action_update:
-                data.updateCardData(position, new CardData("Измененная заметка" + position,
-                        "Новое содержимое", false));
-                myAdapter.notifyItemChanged(position);
-                return true;
-            case R.id.action_delete:
-                data.deleteCardData(position);
-                myAdapter.notifyItemRemoved(position);
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
     private void initRecyclerView() {
-
         //  Эта установка служит для увеличения производительности системы
         recyclerView.setHasFixedSize(true);
 
@@ -137,7 +193,7 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
         recyclerView.setLayoutManager(layoutManager);
 
         //  Установим адаптер
-        myAdapter = new MyAdapter(data, this);
+        myAdapter = new MyAdapter(this);
         recyclerView.setAdapter(myAdapter);
 
 //        // Добавим разделитель карточек
@@ -145,7 +201,18 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
 //        itemDecoration.setDrawable(getResources().getDrawable(R.drawable., null));
 //        recyclerView.addItemDecoration(itemDecoration);
 
-        //  Устновим слушателя
+        // Установим анимацию. А чтобы было хорошо заметно, сделаем анимацию долгой
+        DefaultItemAnimator animator = new DefaultItemAnimator();
+        animator.setAddDuration(1000);
+        animator.setRemoveDuration(1000);
+        recyclerView.setItemAnimator(animator);
+
+        if (moveToFirstPosition && data.size() > 0){
+            recyclerView.scrollToPosition(0);
+            moveToFirstPosition = false;
+        }
+
+        //  Уснававливаем слушатели для элементов списка
         myAdapter.MyItemClickListener(new MyAdapter.MyClickListener() {
             @Override
             public void onItemClick(View view, int position) {

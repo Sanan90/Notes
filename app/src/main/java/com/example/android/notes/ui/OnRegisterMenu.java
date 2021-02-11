@@ -1,4 +1,4 @@
-package com.example.android.notes;
+package com.example.android.notes.ui;
 
 import android.view.View;
 
