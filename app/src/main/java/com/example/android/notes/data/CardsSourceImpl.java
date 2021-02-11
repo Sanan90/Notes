@@ -1,8 +1,11 @@
-package com.example.android.notes;
+package com.example.android.notes.data;
 
 import android.content.res.Resources;
 
+import com.example.android.notes.R;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class CardsSourceImpl implements CardsSource {
@@ -15,19 +18,22 @@ public class CardsSourceImpl implements CardsSource {
         this.resources = resources;
     }
 
-    public CardsSourceImpl init() {
+    public CardsSource init(CardsSourceResponse cardsSourceResponse) {
         //  Получем наш список строк
         String[] notes_titles = resources.getStringArray(R.array.notes_title);
         String[] notes_body = resources.getStringArray(R.array.notes_body);
         //  Заполнение источника данных
         for (int i = 0; i < notes_titles.length; i++) {
-            dataSource.add(new CardData(notes_titles[i], notes_body[i], false));
+            dataSource.add(new CardData(notes_titles[i], notes_body[i],
+                    false, Calendar.getInstance().getTime()));
+        }
+        if (cardsSourceResponse != null) {
+            cardsSourceResponse.initialized(this);
         }
         return this;
     }
 
-    //
-
+    //  Получаем в качестве аргумента номер и возвращаем элемент из нашего списка с под этим номером
     @Override
     public CardData getCardData(int position) {
         return dataSource.get(position);
@@ -58,3 +64,5 @@ public class CardsSourceImpl implements CardsSource {
         dataSource.clear();
     }
 }
+
+//  Класс который создает и хранит коллекцию захардкоденных данных, при каждом запуске

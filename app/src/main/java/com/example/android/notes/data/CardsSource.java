@@ -1,6 +1,9 @@
-package com.example.android.notes;
+package com.example.android.notes.data;
+
+import com.example.android.notes.data.CardData;
 
 public interface CardsSource {
+    CardsSource init(CardsSourceResponse cardsSourceResponse);
     CardData getCardData(int position);
     int size();
     void deleteCardData(int position);
@@ -8,3 +11,5 @@ public interface CardsSource {
     void addCardData(CardData cardData);
     void clearCardData();
 }
+
+//  Источник данных
