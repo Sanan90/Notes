@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="okBtnColotBckg">#3BBCA3A3</color>
     <color name="noteBckgrColor">#E4E1EA</color>
+    <color name="backgroundDialog">#B5DAC613</color>
 </resources>

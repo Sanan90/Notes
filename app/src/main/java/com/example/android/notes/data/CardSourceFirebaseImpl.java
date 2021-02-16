@@ -50,6 +50,7 @@ public class CardSourceFirebaseImpl implements CardsSource {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             cardsData = new ArrayList<CardData>();
+                            //  document это', по сути HashMap
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> doc = document.getData();   //  Object это наша cardData
                                 String id = document.getId();
@@ -58,7 +59,7 @@ public class CardSourceFirebaseImpl implements CardsSource {
                             }
                             Log.d(TAG, "success " + cardsData.size() + " qnt");
                             cardsSourceResponse.initialized(CardSourceFirebaseImpl.this);
-                        }   else {
+                        } else {
                             Log.d(TAG, "get failed with ", task.getException());
                         }
                     }
@@ -72,11 +73,13 @@ public class CardSourceFirebaseImpl implements CardsSource {
         return this;
     }
 
+    //  Врзвращает карточку по позиции
     @Override
     public CardData getCardData(int position) {
         return cardsData.get(position);
     }
 
+    //  Возвращаем размер. Это понадобиться для адаптера
     @Override
     public int size() {
         if (cardsData == null) {
@@ -88,15 +91,16 @@ public class CardSourceFirebaseImpl implements CardsSource {
     @Override
     public void deleteCardData(int position) {
         //  Удалить документ с определенным ID
-        collection.document(cardsData.get(position).getId()).delete();
-        cardsData.remove(position);
+        collection.document(cardsData.get(position).getId()).delete();  //  Удаляем из FireBase(базы данных)
+        cardsData.remove(position);  // Также удаляем из массива карточек
     }
 
     @Override
     public void updateCardData(int position, CardData cardData) {
         String id = cardData.getId();
         //  Изменить документ по ID
-        collection.document(id).set(CardDataMapping.toDocument(cardData));
+        collection.document(cardsData.get(position).getId()).set(CardDataMapping.toDocument(cardData));
+        cardsData.set(position, cardData);  // Работает и без этого
     }
 
     @Override
@@ -110,13 +114,45 @@ public class CardSourceFirebaseImpl implements CardsSource {
         });
     }
 
+    //Динамически все удаляем
     @Override
     public void clearCardData() {
         for (CardData cardData : cardsData) {
             collection.document(cardData.getId()).delete();
         }
-        cardsData = new ArrayList<>();
+        cardsData = new ArrayList<>();  //  Создаем абсолютнр пучстой массив карточек
     }
+
+    @Override
+    public void deleteMultiple() {
+        List<CardData> cardsData2;
+        cardsData2 = cardsData;
+        for (CardData cardData : cardsData) {
+            if (cardData.isCheckbox()) {
+                int a = cardsData.indexOf(cardData);
+                String idForDelete = cardData.getId();
+                collection.document(cardsData.get(a).getId()).delete();  //  Удаляем из FireBase(базы данных)
+
+                for (int i = 0; i < cardsData.size(); i++) {
+                    if (cardsData.get(i).getId().equals(idForDelete)) {
+//                        cardsData2.remove(cardData);
+                        break;
+                    }
+                }
+                 // Также удаляем из массива карточек
+            }
+        }
+        cardsData = cardsData2;
+    }
+//                deleteCardDataById(cardData.getId());
+//                collection.document(cardData.getId()).delete();
+
+
+    @Override
+    public void readCheckbox(int position, boolean readCheck) {
+        cardsData.get(position).setCheckbox(readCheck);
+    }
+
 }
 
 //  Класс где проходит вся основная работа с базой данных.

@@ -63,6 +63,16 @@ public class CardsSourceImpl implements CardsSource {
     public void clearCardData() {
         dataSource.clear();
     }
+
+    @Override
+    public void deleteMultiple() {
+
+    }
+
+    @Override
+    public void readCheckbox(int position, boolean readCheck) {
+
+    }
 }
 
 //  Класс который создает и хранит коллекцию захардкоденных данных, при каждом запуске

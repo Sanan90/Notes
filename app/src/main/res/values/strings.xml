@@ -24,6 +24,17 @@
     <string name="open_note">Open note</string>
     <string name="fragmentCardEditTextHint">Заголовок</string>
     <string name="save">Save</string>
+    <string name="Ok">OK</string>
+    <string name="No">NO</string>
+    <string name="Delete_all">Delete all</string>
+    <string name="delete_marked">Delete merked</string>
+    <string name="SureDelete">Вы точно хотите удалить?</string>
+    <string name="deleteAllOrmarked">Delete all or marked?</string>
+    <string name="updateNoteTitle">Смените навзание земетки</string>
+    <string name="saveText">Save</string>
+    <string name="cansel">Cansel</string>
+    <string name="continue_">continue</string>
+    <string name="sign_out">sign out</string>
 
 </resources>
 
