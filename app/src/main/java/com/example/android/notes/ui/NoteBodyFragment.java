@@ -12,12 +12,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.example.android.notes.MainActivity;
 import com.example.android.notes.R;
 import com.example.android.notes.data.CardData;
+import com.example.android.notes.observe.Publisher;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class NoteBodyFragment extends Fragment {
 
@@ -26,10 +32,11 @@ public class NoteBodyFragment extends Fragment {
     final String SAVE2 = "save2";
     String saveText;
     String saveText2;
-    SharedPreferences sPref;
     public static final String ARG_INDEX2 = "index2";
     private CardData index2;
     private Navigation navigation;
+    private DatePicker datePicker;
+    Publisher publisher;
 
     public NoteBodyFragment() {
     }
@@ -46,8 +53,9 @@ public class NoteBodyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            saveText2 = savedInstanceState.getString(SAVE2);
+        //  Если есть аргумент, значит получаем cardData которое содержит всю информацию о заметке.
+        if (getArguments() != null) {
+            index2 = getArguments().getParcelable(ARG_INDEX2);
         }
     }
 
@@ -61,33 +69,39 @@ public class NoteBodyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         notes_body_text = view.findViewById(R.id.note_body_text);
+        datePicker = view.findViewById(R.id.inputDate);
 
-        //  Если есть аргумент, значит получаем cardData которое содержит всю информацию о заметке.
-        if (getArguments() != null) {
-            index2 = getArguments().getParcelable(ARG_INDEX2);
-        }
-
-        sPref = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
-
-        if (sPref.getString(index2.getNotes_title(), "") != null) {
-            index2.setNotes_body(sPref.getString(index2.getId(), ""));
-        }
         // Передаем на страницу заметки, соответствующий текст.
         notes_body_text.setText(index2.getNotes_body());
-
 
         MaterialButton button = view.findViewById(R.id.btn_ok_save_note);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                index2.setNotes_body(notes_body_text.getText().toString());
-                sPref = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sPref.edit();
-                editor.putString(index2.getId(), index2.getNotes_body());
-                editor.commit();
-                getActivity().finish();
+                index2 = collectCardData();
+                navigation.closeFragment();
             }
         });
+    }
+
+    //  Получение даты из datePicker
+    private Date getDateFromDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, this.datePicker.getYear());
+        calendar.set(calendar.MONTH, this.datePicker.getMonth());
+        calendar.set(calendar.DAY_OF_MONTH, this.datePicker.getDayOfMonth());
+        return calendar.getTime();
+    }
+
+
+    private CardData collectCardData() {
+        String note_title = index2.getNotes_title();
+        String note_body = notes_body_text.getText().toString();
+        Date date = getDateFromDatePicker();
+        CardData answer;
+        answer = new CardData(note_title, note_body, index2.isCheckbox(), date);
+        answer.setId(index2.getId()); //  Разобраться, работает ли приложение корректно без этого
+        return answer;
     }
 
     @Override
@@ -95,5 +109,20 @@ public class NoteBodyFragment extends Fragment {
         super.onAttach(context);
         MainActivity activity = (MainActivity) context;
         this.navigation = activity.getNavigation();
+        this.publisher = activity.getPublisher();
+    }
+
+    @Override
+    public void onDetach() {
+        publisher = null;
+        navigation = null;
+        Toast.makeText(getContext(), "asssss", Toast.LENGTH_SHORT).show();
+        super.onDetach();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        publisher.notifySingle(index2);
     }
 }

@@ -10,6 +10,9 @@ public interface CardsSource {
     void updateCardData(int position, CardData cardData);
     void addCardData(CardData cardData);
     void clearCardData();
+    void deleteMultiple();
+
+    void readCheckbox(int position, boolean readCheck);
 }
 
 //  Источник данных

@@ -27,7 +27,8 @@
             android:id="@+id/inputDate"
             android:layout_gravity="center"
             android:calendarViewShown="false"
-            android:datePickerMode="spinner"/>
+            android:datePickerMode="spinner"
+            android:visibility="gone"/>
         <!-- также можно делать режим календаря
 android:datePickerMode="calendar"
 и режим отображения календаря в spinner-режиме

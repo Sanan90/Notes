@@ -16,10 +16,10 @@ public class CardDataMapping {
         public final static String CHECKBOX = "checkbox";
     }
 
-//  2:10:00 урок 10
+//  Получаем map и из него по ключу достаем все нужные значения. Все те же поля, что содержит CardData.
     public static CardData toCardData(String id, Map<String, Object> doc) {
-//        long indexPic = (long) doc.get(Fields.PICTURE);
-        Timestamp timeStamp = (Timestamp)doc.get(Fields.DATE);
+//        long indexPic = (long) doc.get(Fields.PICTURE);   //  Получаем ссылку на картинку
+        Timestamp timeStamp = (Timestamp)doc.get(Fields.DATE);  // Получаем дату
         CardData answer = new CardData((String) doc.get(Fields.NOTE_TITLE),
                 (String) doc.get(Fields.NOTE_BODY),
                 (boolean) doc.get(Fields.CHECKBOX),
@@ -28,6 +28,8 @@ public class CardDataMapping {
         return answer;
     }
 
+    //  Метод который переводит нашу дату в документ, понятный нашему FireStore.
+    //  Прямо противоположный метод toCardData-e
     public static Map<String, Object> toDocument(CardData cardData) {
         Map<String, Object> answer = new HashMap<>();
         answer.put(Fields.NOTE_TITLE, cardData.getNotes_title());

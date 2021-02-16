@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.example.android.notes.MainActivity;
 import com.example.android.notes.data.CardData;
@@ -70,6 +71,7 @@ public class CardFragment extends Fragment {
     public void onDetach() {
         publisher = null;
         navigation = null;
+        Toast.makeText(getContext(), "asssss", Toast.LENGTH_SHORT).show();
         super.onDetach();
     }
 
@@ -106,6 +108,7 @@ public class CardFragment extends Fragment {
         if (cardData != null) {
             CardData answer;
             answer = new CardData(note_title, note_body, cardData.isCheckbox(), date);
+            answer.setId(cardData.getId()); //  Разобраться, работает ли приложение корректно без этого
             return answer;
         }   else {
             return new CardData(note_title, note_body, false, date);

@@ -6,17 +6,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.android.notes.ui.DialogBuilderFragment;
 import com.example.android.notes.ui.MenuBuild;
 import com.example.android.notes.ui.Navigation;
 import com.example.android.notes.ui.NoteBodyFragment;
 import com.example.android.notes.ui.NotesListFragment;
 import com.example.android.notes.observe.Publisher;
+import com.example.android.notes.ui.StartFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     Navigation navigation;
     Publisher publisher = new Publisher();
     MenuBuild menuBuild;
+    DialogFragment dialogFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +37,7 @@ public class MainActivity extends AppCompatActivity {
         menuBuild = new MenuBuild();
         navigation = new Navigation(getSupportFragmentManager()); // Усстанавливаем фоагмент Менеджера
         menuBuild.initMenus(this);    //  Настраиваем меню, верхнее, боковое и т.д.
-        if (getIntent().getExtras() != null) {  //  Проверка на наличие аргументов на нашем интенте.
-            // При налиичи аргументов, значит открываем какую то заметку. Вызываем метод нашей навигации addFragment и передаем ей нужный фрагмент, и параметр, для добавления в бекстек.
-            getNavigation().addFragment(NoteBodyFragment.newInstance(getIntent().getExtras().getParcelable(NoteBodyFragment.ARG_INDEX2)), false); //
-        }   else {
-            //  Если аргументов нету, значит открываем список заметок. Передаем все в тот же метод нашей навигации нужный фрагмент и параметр для бекстека.
-            getNavigation().addFragment(NotesListFragment.newInstance(), false);
-        }
+        getNavigation().addFragment(StartFragment.newInstance(), false);
     }
 
     @Override
@@ -55,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
     //  Возвращаем publisher
     public Publisher getPublisher () {
         return publisher;
+    }
+
+    public DialogFragment getDialogFragment() {
+        return dialogFragment;
+    }
+
+    public void setDialogFragment(DialogFragment dialogFragment) {
+        this.dialogFragment = dialogFragment;
     }
 
     //  Устанавливаем слушатели для кнопок Тулбара

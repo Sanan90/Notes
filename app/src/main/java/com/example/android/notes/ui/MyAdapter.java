@@ -1,15 +1,19 @@
 package com.example.android.notes.ui;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.android.notes.MainActivity;
 import com.example.android.notes.R;
 import com.example.android.notes.data.CardData;
 import com.example.android.notes.data.CardsSource;
@@ -20,10 +24,11 @@ import java.text.SimpleDateFormat;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-//    String[] notesList; //  Создаем массив строк
+    //    String[] notesList; //  Создаем массив строк
     public MyClickListener myClickListener; //  Создаем экземпляр нашего слушателя
     private CardsSource dataSource;
     private final Fragment fragment;
+    private final OnRegisterMenu onRegister;
 
     public int getMenuPosition() {
         return menuPosition;
@@ -31,23 +36,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     private int menuPosition;
 
-
-
-
-
-
-    //  передаем в конструктор источник данных
-    //  Сейчас это массив, но может быть зарос в база данных
-    public MyAdapter(Fragment fragment) {
+    public MyAdapter(Fragment fragment, OnRegisterMenu onRegister) {
         this.fragment = fragment;
+        this.onRegister = onRegister;
     }
 
-    public  void setDataSource(CardsSource dataSource) {
+    public void setDataSource(CardsSource dataSource) {
         this.dataSource = dataSource;
-        notifyDataSetChanged();
+        notifyDataSetChanged(); // Обновляем список
     }
 
-    //  Передаем созданному экземпляру, полученного аргумент
 
     public void MyItemClickListener(MyClickListener myClickListener) {
         this.myClickListener = myClickListener;
@@ -78,9 +76,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return dataSource.size();
     }
 
+
     //  Интерфейс для нажатий.
     public interface MyClickListener {
         void onItemClick(View view, int position);
+        void onCheckClick(boolean readCkeck, int position);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -99,6 +99,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             date = itemView.findViewById(R.id.date);
             registerContextMenu(itemView);
 
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int position = MyViewHolder.this.getAdapterPosition();
+                    myClickListener.onCheckClick(checkBox.isChecked(), position);
+                }
+            });
+
             //  Вешаем слушатель на элементы списка
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,13 +118,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
 
         private void registerContextMenu(@NonNull View itemView) {
-            if (fragment!=null) {
-        //      Усстанавливаем слушатель элементу списка во время длинного нажатия
+            if (fragment != null) {
+                //      Усстанавливаем слушатель элементу списка во время длинного нажатия
                 itemView.setOnLongClickListener(v -> {
-                    menuPosition = getLayoutPosition();
+                    menuPosition = getLayoutPosition();     //  getLayoutPosition это метод менеджера лайоутов, который возвращает позицию списка
                     return false;
                 });
-//                fragment.onRegister(itemView);
+                onRegister.onRegister(itemView);
             }
         }
 

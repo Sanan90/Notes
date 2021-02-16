@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -44,6 +45,9 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
     private MyAdapter myAdapter;
     private RecyclerView recyclerView;
     public final String DATA = "com/example/android/notes/data";
+
+    DialogFragment dialogFragment;
+    DialogForRemoveAllOrMarkedBuilderFragment dialogFragmentClear;
 
     private Navigation navigation;
     private Publisher publisher;
@@ -140,17 +144,38 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
                 return true;
 
             case R.id.action_delete:
-                int deletePosition = myAdapter.getMenuPosition();
-                data.deleteCardData(deletePosition);
-                myAdapter.notifyItemRemoved(deletePosition);
+
+                dialogFragment = new DialogBuilderFragment(this);
+                dialogFragment.setCancelable(false);
+                dialogFragment.show(requireActivity().getSupportFragmentManager(), "TAG");
                 return true;
 
-            case  R.id.action_clear:
-                data.clearCardData();
-                myAdapter.notifyDataSetChanged();
+            case R.id.action_clear:
+
+                dialogFragmentClear = new DialogForRemoveAllOrMarkedBuilderFragment(this);
+                dialogFragmentClear.setCancelable(false);
+                dialogFragmentClear.show(requireActivity().getSupportFragmentManager(), "TAG");
                 return true;
         }
         return false;
+    }
+
+    //  Удаляем все заметки
+    public void deleteAll() {
+        data.clearCardData();
+        myAdapter.notifyDataSetChanged();
+    }
+
+    //  Удаляем отмеченные заметки
+    public void deleteMarked() {
+        data.deleteMultiple();
+        myAdapter.notifyDataSetChanged();
+    }
+    //  Удаляем выбранную заметку
+    public void deletee() {
+        int deletePosition = myAdapter.getMenuPosition();
+        data.deleteCardData(deletePosition);
+        myAdapter.notifyItemRemoved(deletePosition);
     }
 
     //  Создаем наш список.
@@ -164,16 +189,19 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        MainActivity activity = (MainActivity)context;
+        MainActivity activity = (MainActivity) context;
         navigation = activity.getNavigation();
         publisher = activity.getPublisher();
+        dialogFragment = activity.getDialogFragment();
     }
 
     @Override
     public void onDetach() {
         navigation = null;
         publisher = null;
+        Toast.makeText(getContext(), "asssss", Toast.LENGTH_SHORT).show();
         super.onDetach();
+        dialogFragment = null;
     }
 
     //  Метод который вызываеться во время длинного нажатия на элемент списка
@@ -193,7 +221,7 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
         recyclerView.setLayoutManager(layoutManager);
 
         //  Установим адаптер
-        myAdapter = new MyAdapter(this);
+        myAdapter = new MyAdapter(this, this);
         recyclerView.setAdapter(myAdapter);
 
 //        // Добавим разделитель карточек
@@ -207,7 +235,7 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
         animator.setRemoveDuration(1000);
         recyclerView.setItemAnimator(animator);
 
-        if (moveToFirstPosition && data.size() > 0){
+        if (moveToFirstPosition && data.size() > 0) {
             recyclerView.scrollToPosition(0);
             moveToFirstPosition = false;
         }
@@ -216,7 +244,13 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
         myAdapter.MyItemClickListener(new MyAdapter.MyClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                showNoteBodySettings(data.getCardData(position)); // Выясняем какая по счету заметка нажата, и передаем эту цифру в метод showNoteBodySettings
+                showNoteBodySettings(data.getCardData(position), position); // Выясняем какая по счету заметка нажата, получаем данную cardData и передаем эту цифру в метод showNoteBodySettings
+            }
+
+            @Override
+            public void onCheckClick(boolean readCheck, int position) {
+                Toast.makeText(getContext(), String.valueOf(readCheck), Toast.LENGTH_SHORT).show();
+                data.readCheckbox(position, readCheck);
             }
         });
     }
@@ -252,16 +286,16 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
     }
 
     //  проверяем режим эурана, портретный или ландшавный
-    private void showNoteBodySettings(CardData cardData) {
+    private void showNoteBodySettings(CardData cardData, int position) {
         if (isLandscape) {
-            showNoteBodyForLandscape(cardData);  //  если ландшафный
+            showNoteBodyForLandscape(cardData, position);  //  если ландшафный
         } else {
-            showNoteBody(cardData);  // Если портретный
+            showNoteBody(cardData, position);  // Если портретный
         }
     }
 
     //  Метод вызываеться принажатии на заметку при ландшавном режиме
-    private void showNoteBodyForLandscape(CardData cardData) {
+    private void showNoteBodyForLandscape(CardData cardData, int position) {
         Context context = getContext();
         if (context != null) {
             NoteBodyFragment fragment = NoteBodyFragment.newInstance(cardData);
@@ -278,13 +312,15 @@ public class NotesListFragment extends Fragment implements OnRegisterMenu {
     }
 
     //  Метод вызываеться принажатии на заметку при портретном режиме
-    private void showNoteBody(CardData cardData) {
-        Context context = getContext();
-        if (context != null) {
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.putExtra(NoteBodyFragment.ARG_INDEX2, cardData);
-            startActivity(intent);
-        }
+    private void showNoteBody(CardData cardData, int position) {
+        navigation.addFragment(NoteBodyFragment.newInstance(cardData), true);
+        publisher.subscribe(new Observer() {
+            @Override
+            public void updateCardData(CardData cardData) {
+                data.updateCardData(position, cardData);
+                myAdapter.notifyItemChanged(position);
+            }
+        });
     }
 
     @Override
